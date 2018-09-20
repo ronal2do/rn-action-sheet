@@ -1,12 +1,9 @@
 
 package com.ronal2do;
 
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.telecom.Call;
 
 import com.cocosw.bottomsheet.BottomSheet;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -16,10 +13,6 @@ import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 
-import org.json.JSONObject;
-
-import java.util.Map;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +32,7 @@ public class RNActionSheetModule extends ReactContextBaseJavaModule {
     public String getName() {
         return "RNActionSheet";
     }
-  
+
     @ReactMethod
     public void show(ReadableMap options, final Callback onSelect) {
         if (this.opened) return;
@@ -128,5 +121,5 @@ public class RNActionSheetModule extends ReactContextBaseJavaModule {
             failureCallback.invoke(new Exception("The app you want to share is not installed."));
         }
     }
-    
+
 }
