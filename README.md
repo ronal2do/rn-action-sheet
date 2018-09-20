@@ -1,6 +1,8 @@
 
 # rn-action-sheet
 
+Android package https://github.com/soarcn/BottomSheet
+
 ## Getting started
 
 `$ npm install rn-action-sheet --save`

@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RNActionSheetModule extends ReactContextBaseJavaModule {
-    private boolean isOpened;
+    private boolean opened;
     private Callback shareSuccessCallback;
     private Callback shareFailureCallback;
 
@@ -42,9 +42,9 @@ public class RNActionSheetModule extends ReactContextBaseJavaModule {
   
     @ReactMethod
     public void show(ReadableMap options, final Callback onSelect) {
-        if (this.isOpened) return;
+        if (this.opened) return;
 
-        this.isOpened = true;
+        this.opened = true;
 
         ReadableArray optionArray = options.getArray("options");
         final Integer cancelButtonIndex = options.getInt("cancelButtonIndex");
@@ -52,7 +52,6 @@ public class RNActionSheetModule extends ReactContextBaseJavaModule {
         boolean dark = false;
         BottomSheet.Builder builder;
 
-        // Title.
         try {
             title = options.getString("title");
             builder = new BottomSheet.Builder(this.getCurrentActivity()).title(title);
@@ -60,7 +59,6 @@ public class RNActionSheetModule extends ReactContextBaseJavaModule {
             builder = new BottomSheet.Builder(this.getCurrentActivity());
         }
 
-        // Dark theme.
         try {
             dark = options.getBoolean("dark");
             if (dark) {
@@ -70,7 +68,6 @@ public class RNActionSheetModule extends ReactContextBaseJavaModule {
             // Code...
         }
 
-        // Options.
         Integer size = optionArray.size();
         for (int i = 0; i < size; i++) {
             builder.sheet(i, optionArray.getString(i));
@@ -89,7 +86,7 @@ public class RNActionSheetModule extends ReactContextBaseJavaModule {
         builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                RNActionSheetModule.this.isOpened = false;
+                RNActionSheetModule.this.opened = false;
             }
         });
 
