@@ -22,7 +22,7 @@
 #### Android
 
 1. Open up `android/app/src/main/java/[...]/MainActivity.java`
-  - Add `import com.reactlibrary.RNActionSheetPackage;` to the imports at the top of the file
+  - Add `import com.ronal2do.RNActionSheetPackage;` to the imports at the top of the file
   - Add `new RNActionSheetPackage()` to the list returned by the `getPackages()` method
 2. Append the following lines to `android/settings.gradle`:
   	```
@@ -47,7 +47,25 @@
 ```javascript
 import RNActionSheet from 'rn-action-sheet';
 
-// TODO: What to do with the module?
-RNActionSheet;
+onPress = () => RNActionSheet.show({
+  options: ['Banana', 'Orange', 'Apple', 'Mango', 'Lemon', 'Cancel'],
+  title: 'Mix Salad',
+  dark: this.state.dark, // boolean
+  cancelButtonIndex: 5,
+}, value => {
+  console.log(value);
+})
+
+onShare = () => RNActionSheet.showShare({
+  url: 'https://your_url.com',
+  subject: 'Share',
+  message: 'Simple share',
+}, (value) => {
+  alert(value);
+}, (resultcode, path) => {
+    console.log(resultcode);
+    console.log(path);
+})
+
 ```
   
