@@ -68,7 +68,7 @@ public class RNActionSheetModule extends ReactContextBaseJavaModule {
 
     try {
       showCancel = options.getBoolean("showCancel");
-      if (showCancel) {
+      if (showCancel == true) {
         for (int i = 0; i < size; i++) {
           builder.sheet(i, optionArray.getString(i));
         }
@@ -86,9 +86,19 @@ public class RNActionSheetModule extends ReactContextBaseJavaModule {
           }
         }
       }
-
     } catch (Exception e) {
-      // Code...
+      for (int i = 0; i < size; i++) {
+        boolean isIncluded = false;
+        for (int j = 0; j < cancelButtonIndex; j++) {
+          if (i == j) {
+            isIncluded = true;
+          }
+        }
+
+        if (isIncluded) {
+          builder.sheet(i, optionArray.getString(i));
+        }
+      }
     }
 
     builder.listener(new DialogInterface.OnClickListener() {
