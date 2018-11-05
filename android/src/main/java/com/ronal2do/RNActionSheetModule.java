@@ -39,10 +39,13 @@ public class RNActionSheetModule extends ReactContextBaseJavaModule {
 
         this.opened = true;
 
-        ReadableArray optionArray = options.getArray("options");
+        final ReadableArray optionArray = options.getArray("options");
+        final Integer size = optionArray.size();
+
         final Integer cancelButtonIndex = options.getInt("cancelButtonIndex");
         String title;
         boolean dark = false;
+        
         BottomSheet.Builder builder;
 
         try {
@@ -61,9 +64,23 @@ public class RNActionSheetModule extends ReactContextBaseJavaModule {
             // Code...
         }
 
-        Integer size = optionArray.size();
-        for (int i = 0; i < size; i++) {
+//        Integer size = optionArray.size();
+//        for (int i = 0; i < size; i++) {
+//            builder.sheet(i, optionArray.getString(i));
+//        }
+
+        for (int i=0; i<size; i++) {
+          boolean isIncluded = false;
+          for (int j=0; j < cancelButtonIndex; j++) {
+            if (i == j) {
+              isIncluded = true;
+            }
+
+          }
+
+          if (isIncluded) {
             builder.sheet(i, optionArray.getString(i));
+          }
         }
 
         builder.listener(new DialogInterface.OnClickListener() {
