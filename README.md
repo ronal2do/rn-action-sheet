@@ -36,15 +36,6 @@ Android package https://github.com/soarcn/BottomSheet
       compile project(':rn-action-sheet')
   	```
 
-#### Windows
-[Read it! :D](https://github.com/ReactWindows/react-native)
-
-1. In Visual Studio add the `RNActionSheet.sln` in `node_modules/rn-action-sheet/windows/RNActionSheet.sln` folder to their solution, reference from their app.
-2. Open up your `MainPage.cs` app
-  - Add `using Toast.RNActionSheet;` to the usings at the top of the file
-  - Add `new RNActionSheetPackage()` to the `List<IReactPackage>` returned by the `Packages` method
-
-
 ## Usage
 ```javascript
 import RNActionSheet from 'rn-action-sheet';
