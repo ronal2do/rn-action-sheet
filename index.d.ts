@@ -19,8 +19,8 @@ declare module 'rn-action-sheet' {
   export interface Options {
     options: [String];
     title: String;
-    dark: boolean;
-    showCancel: boolean;
+    dark?: boolean;
+    showCancel?: boolean;
     cancelButtonIndex: number;
   }
 }
