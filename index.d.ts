@@ -20,6 +20,7 @@ declare module 'rn-action-sheet' {
     options: [String];
     title: String;
     dark: boolean;
+    showCancel: boolean;
     cancelButtonIndex: number;
   }
 }

@@ -53,6 +53,7 @@ onPress = () => RNActionSheet.show({
   options: ['Banana', 'Orange', 'Apple', 'Mango', 'Lemon', 'Cancel'],
   title: 'Mix Salad',
   dark: this.state.dark, // boolean
+  showCancel: true, // android only, to show cancel button
   cancelButtonIndex: 5,
 }, value => {
   console.log(value);

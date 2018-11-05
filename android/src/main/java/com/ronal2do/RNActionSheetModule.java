@@ -17,126 +17,134 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RNActionSheetModule extends ReactContextBaseJavaModule {
-    private boolean opened;
-    private Callback shareSuccessCallback;
-    private Callback shareFailureCallback;
+  private boolean opened;
+  private Callback shareSuccessCallback;
+  private Callback shareFailureCallback;
 
-    private final ReactApplicationContext reactContext;
+  private final ReactApplicationContext reactContext;
 
-    public RNActionSheetModule(ReactApplicationContext reactContext) {
-        super(reactContext);
-        this.reactContext = reactContext;
+  public RNActionSheetModule(ReactApplicationContext reactContext) {
+    super(reactContext);
+    this.reactContext = reactContext;
+  }
+
+  @Override
+  public String getName() {
+    return "RNActionSheet";
+  }
+
+  @ReactMethod
+  public void show(ReadableMap options, final Callback onSelect) {
+    if (this.opened)
+      return;
+
+    this.opened = true;
+
+    final ReadableArray optionArray = options.getArray("options");
+    final Integer size = optionArray.size();
+
+    final Integer cancelButtonIndex = options.getInt("cancelButtonIndex");
+    String title;
+    boolean dark = false;
+    boolean showCancel = false;
+
+    BottomSheet.Builder builder;
+
+    try {
+      title = options.getString("title");
+      builder = new BottomSheet.Builder(this.getCurrentActivity()).title(title);
+    } catch (Exception e) {
+      builder = new BottomSheet.Builder(this.getCurrentActivity());
     }
 
-    @Override
-    public String getName() {
-        return "RNActionSheet";
+    try {
+      dark = options.getBoolean("dark");
+      if (dark) {
+        builder.darkTheme();
+      }
+    } catch (Exception e) {
+      // Code...
     }
 
-    @ReactMethod
-    public void show(ReadableMap options, final Callback onSelect) {
-        if (this.opened) return;
-
-        this.opened = true;
-
-        final ReadableArray optionArray = options.getArray("options");
-        final Integer size = optionArray.size();
-
-        final Integer cancelButtonIndex = options.getInt("cancelButtonIndex");
-        String title;
-        boolean dark = false;
-        
-        BottomSheet.Builder builder;
-
-        try {
-            title = options.getString("title");
-            builder = new BottomSheet.Builder(this.getCurrentActivity()).title(title);
-        } catch (Exception e) {
-            builder = new BottomSheet.Builder(this.getCurrentActivity());
+    try {
+      showCancel = options.getBoolean("showCancel");
+      if (showCancel) {
+        for (int i = 0; i < size; i++) {
+          builder.sheet(i, optionArray.getString(i));
         }
-
-        try {
-            dark = options.getBoolean("dark");
-            if (dark) {
-                builder.darkTheme();
-            }
-        } catch (Exception e) {
-            // Code...
-        }
-
-//        Integer size = optionArray.size();
-//        for (int i = 0; i < size; i++) {
-//            builder.sheet(i, optionArray.getString(i));
-//        }
-
-        for (int i=0; i<size; i++) {
+      } else {
+        for (int i = 0; i < size; i++) {
           boolean isIncluded = false;
-          for (int j=0; j < cancelButtonIndex; j++) {
+          for (int j = 0; j < cancelButtonIndex; j++) {
             if (i == j) {
               isIncluded = true;
             }
-
           }
 
           if (isIncluded) {
             builder.sheet(i, optionArray.getString(i));
           }
         }
+      }
 
-        builder.listener(new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                if (which != cancelButtonIndex) {
-                    onSelect.invoke(which);
-                }
-            }
-        });
-
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                RNActionSheetModule.this.opened = false;
-            }
-        });
-
-        builder.build().show();
+    } catch (Exception e) {
+      // Code...
     }
 
-    @ReactMethod
-    public void showShare(ReadableMap options, Callback failureCallback, Callback successCallback) {
-        String url = options.getString("url");
-        String message = options.getString("message");
-        String subject = options.getString("subject");
-
-        List<String> items = new ArrayList<>();
-        if (message != null && !message.isEmpty()) {
-            items.add(message);
+    builder.listener(new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        dialog.dismiss();
+        if (which != cancelButtonIndex) {
+          onSelect.invoke(which);
         }
+      }
+    });
 
-        final Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
-        Uri uri = Uri.parse(url);
-        if (uri != null) {
-            if (uri.getScheme() != null && "data".equals(uri.getScheme().toLowerCase())) {
-                shareIntent.setType("*/*");
-                shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-            } else {
-                shareIntent.setType("text/plain");
-                shareIntent.putExtra(Intent.EXTRA_EMAIL, url);
-                shareIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-                shareIntent.putExtra(Intent.EXTRA_TEXT, message);
-            }
-        }
+    builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+      @Override
+      public void onDismiss(DialogInterface dialog) {
+        RNActionSheetModule.this.opened = false;
+      }
+    });
 
-        this.shareSuccessCallback = successCallback;
-        this.shareFailureCallback = failureCallback;
+    builder.build().show();
+  }
 
-        if (shareIntent.resolveActivity(this.getCurrentActivity().getPackageManager()) != null) {
-            this.getCurrentActivity().startActivity(Intent.createChooser(shareIntent, "Share To"));
-        } else {
-            failureCallback.invoke(new Exception("The app you want to share is not installed."));
-        }
+  @ReactMethod
+  public void showShare(ReadableMap options, Callback failureCallback, Callback successCallback) {
+    String url = options.getString("url");
+    String message = options.getString("message");
+    String subject = options.getString("subject");
+
+    List<String> items = new ArrayList<>();
+    if (message != null && !message.isEmpty()) {
+      items.add(message);
     }
+
+    final Intent shareIntent = new Intent();
+    shareIntent.setAction(Intent.ACTION_SEND);
+    Uri uri = Uri.parse(url);
+    if (uri != null) {
+      if (uri.getScheme() != null && "data".equals(uri.getScheme().toLowerCase())) {
+        shareIntent.setType("*/*");
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+      } else {
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_EMAIL, url);
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, message);
+      }
+    }
+
+    this.shareSuccessCallback = successCallback;
+    this.shareFailureCallback = failureCallback;
+
+    if (shareIntent.resolveActivity(this.getCurrentActivity().getPackageManager()) != null) {
+      this.getCurrentActivity().startActivity(Intent.createChooser(shareIntent, "Share To"));
+    } else {
+      failureCallback.invoke(new Exception("The app you want to share is not installed."));
+    }
+  }
 
 }
